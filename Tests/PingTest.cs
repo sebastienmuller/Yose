@@ -5,7 +5,7 @@ using System.Web.Mvc;
 
 namespace Tests
 {
-    public class UnitTest1
+    public class PingTest
     {
         [Test]
         public void Index()
