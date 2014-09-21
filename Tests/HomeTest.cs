@@ -78,5 +78,15 @@ namespace Tests
 
             Assert.NotNull(linkNode, "Link not found");
         }
+
+        [Test]
+        public void PingChallengeLink()
+        {
+            var doc = new HtmlDocument();
+            doc.Load(Path.Combine(_viewsDirectory, "Home", "Index.cshtml"));
+            var linkNode = doc.DocumentNode.SelectSingleNode("//a[@id='ping-challenge-link']");
+
+            Assert.NotNull(linkNode, "Link not found");
+        }
     }
 }
