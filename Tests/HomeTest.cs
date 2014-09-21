@@ -16,6 +16,14 @@ namespace Tests
     [TestFixture]
     public class HomeTest
     {
+        string _viewsDirectory;
+
+        public HomeTest()
+        {
+            var solutionDirectory = Directory.GetParent(AppDomain.CurrentDomain.SetupInformation.ApplicationBase).Parent.Parent.Parent;
+            _viewsDirectory = Path.Combine(solutionDirectory.FullName, "YoseApp", "Views");
+        }
+
         [Test]
         public void CallRootGivesHomeindex()
         {
@@ -41,14 +49,24 @@ namespace Tests
         [Test]
         public void IndexViewResultContainsHelloYose()
         {
-            var solutionDirectory = Directory.GetParent(AppDomain.CurrentDomain.SetupInformation.ApplicationBase).Parent.Parent.Parent;
-            var viewsDirectory = Path.Combine(solutionDirectory.FullName, "YoseApp", "Views");
-
             var doc = new HtmlDocument();
-            doc.Load(Path.Combine(viewsDirectory, "Home", "Index.cshtml"));
+            doc.Load(Path.Combine(_viewsDirectory, "Home", "Index.cshtml"));
             var viewContent = doc.DocumentNode.InnerHtml;
 
             StringAssert.Contains("Hello Yose", viewContent);
+        }
+
+        [Test]
+        public void CheckLinkToRepository()
+        {
+            var doc = new HtmlDocument();
+            doc.Load(Path.Combine(_viewsDirectory, "Home", "Index.cshtml"));
+            var linkNode = doc.DocumentNode.SelectSingleNode("//a[@id='repository-link']");
+            
+            Assert.NotNull(linkNode, "Link not found");
+
+            string link = linkNode.GetAttributeValue("href", string.Empty);
+            StringAssert.AreEqualIgnoringCase("https://github.com/sebastienmuller/Yose/blob/master/README.md", link, "Uncorrect url");
         }
     }
 }
