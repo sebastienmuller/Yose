@@ -10,7 +10,7 @@ namespace YoseApp.Controllers
     {
         public ActionResult Index()
         {
-            return Json(new { alive = true });
+            return Json(new { alive = true }, JsonRequestBehavior.AllowGet);
         }
 	}
 }
