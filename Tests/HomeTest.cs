@@ -68,5 +68,15 @@ namespace Tests
             string link = linkNode.GetAttributeValue("href", string.Empty);
             StringAssert.AreEqualIgnoringCase("https://github.com/sebastienmuller/Yose/blob/master/README.md", link, "Uncorrect url");
         }
+
+        [Test]
+        public void CheckContactMeLink()
+        {
+            var doc = new HtmlDocument();
+            doc.Load(Path.Combine(_viewsDirectory, "Home", "Index.cshtml"));
+            var linkNode = doc.DocumentNode.SelectSingleNode("//a[@id='contact-me-link']");
+
+            Assert.NotNull(linkNode, "Link not found");
+        }
     }
 }
