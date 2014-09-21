@@ -73,7 +73,7 @@ namespace Tests
         public void CheckContactMeLink()
         {
             var doc = new HtmlDocument();
-            doc.Load(Path.Combine(_viewsDirectory, "Home", "Index.cshtml"));
+            doc.Load(Path.Combine(_viewsDirectory, "Shared", "_Layout.cshtml"));
             var linkNode = doc.DocumentNode.SelectSingleNode("//a[@id='contact-me-link']");
 
             Assert.NotNull(linkNode, "Link not found");
