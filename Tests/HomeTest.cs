@@ -13,7 +13,6 @@ using YoseApp.Controllers;
 
 namespace Tests
 {
-    [TestFixture]
     public class HomeTest
     {
         string _viewsDirectory;
