@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using YoseApp.Services;
 
 namespace YoseApp.Controllers
 {
@@ -16,20 +17,9 @@ namespace YoseApp.Controllers
                 return Json(new { number = number, error = "not a number" }, "application/json", JsonRequestBehavior.AllowGet);
             }
 
-            if (multiple % 2 == 0)
-            {
-                int twoCount = 0;
-                int tmpNumber = multiple;
-                while(tmpNumber >= 2)
-                {
-                    tmpNumber = tmpNumber / 2;
-                    twoCount++;
-                }
+            var primeFactors = new PrimeFactorsService().GetPrimeFactors(multiple);
 
-                return Json(new { number = multiple, decomposition = Enumerable.Repeat<int>(2, twoCount) }, "application/json", JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { number = multiple, decomposition = new List<int>(0) }, "application/json", JsonRequestBehavior.AllowGet);
+            return Json(new { number = multiple, decomposition = primeFactors }, "application/json", JsonRequestBehavior.AllowGet);
         }
 	}
 }
