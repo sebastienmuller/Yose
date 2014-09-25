@@ -39,6 +39,21 @@ namespace Tests
         }
 
         [Test]
+        public void CheckTooBigNumber()
+        {
+            var numberStr = "1000001";
+            var controller = new PrimeFactorsController();
+            var result = controller.Index(numberStr) as JsonResult;
+
+            dynamic jsonObj = result.Data;
+
+            StringAssert.AreEqualIgnoringCase("application/json", result.ContentType);
+            Assert.AreEqual(JsonRequestBehavior.AllowGet, result.JsonRequestBehavior);
+            Assert.AreEqual(jsonObj.number, numberStr);
+            Assert.AreEqual(jsonObj.error, "too big number (>1e6)");
+        }
+
+        [Test]
         public void CheckPrimeFactors()
         {
             var pfService = new PrimeFactorsService();
@@ -48,5 +63,7 @@ namespace Tests
             CollectionAssert.AreEquivalent(new List<int> { 3, 5 }, decomposition15);
             CollectionAssert.AreEquivalent(new List<int> { 2, 2, 2, 3 }, decomposition24);
         }
+
+
     }
 }

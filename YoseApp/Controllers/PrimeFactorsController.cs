@@ -16,6 +16,10 @@ namespace YoseApp.Controllers
             {
                 return Json(new { number = number, error = "not a number" }, "application/json", JsonRequestBehavior.AllowGet);
             }
+            else if (multiple > 1000000)
+            {
+                return Json(new { number = number, error = "too big number (>1e6)" }, "application/json", JsonRequestBehavior.AllowGet);
+            }
 
             var primeFactors = new PrimeFactorsService().GetPrimeFactors(multiple);
 
