@@ -5,6 +5,8 @@ using System.Web.Mvc;
 using System.Linq;
 using YoseApp.Services;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using YoseApp.Models;
 
 namespace Tests
 {
@@ -14,28 +16,26 @@ namespace Tests
         public void CheckPowerOfTwoDecomposition()
         {
             var controller = new PrimeFactorsController();
-            var result = controller.Index("16") as JsonResult;
+            var result = controller.Index(new string[] { "16" }) as ContentResult;
 
-            dynamic jsonObj = result.Data;
+            var decomposition = JsonConvert.DeserializeObject<PrimeFactorsDecomposition>(result.Content);
 
             StringAssert.AreEqualIgnoringCase("application/json", result.ContentType);
-            Assert.AreEqual(JsonRequestBehavior.AllowGet, result.JsonRequestBehavior);
-            Assert.AreEqual(jsonObj.number, 16);
-            Assert.AreEqual(jsonObj.decomposition, Enumerable.Repeat<int>(2, 4));
+            Assert.AreEqual(decomposition.Number, "16");
+            Assert.AreEqual(decomposition.Decomposition, Enumerable.Repeat<int>(2, 4));
         }
 
         [Test]
         public void CheckNotANumber()
         {
             var controller = new PrimeFactorsController();
-            var result = controller.Index("YO") as JsonResult;
+            var result = controller.Index(new string[] { "YO" }) as ContentResult;
 
-            dynamic jsonObj = result.Data;
+            var decomposition = JsonConvert.DeserializeObject<PrimeFactorsError>(result.Content);
 
             StringAssert.AreEqualIgnoringCase("application/json", result.ContentType);
-            Assert.AreEqual(JsonRequestBehavior.AllowGet, result.JsonRequestBehavior);
-            Assert.AreEqual(jsonObj.number, "YO");
-            Assert.AreEqual(jsonObj.error, "not a number");
+            Assert.AreEqual(decomposition.Number, "YO");
+            Assert.AreEqual(decomposition.Error, "not a number");
         }
 
         [Test]
@@ -43,14 +43,13 @@ namespace Tests
         {
             var numberStr = "1000001";
             var controller = new PrimeFactorsController();
-            var result = controller.Index(numberStr) as JsonResult;
+            var result = controller.Index(new string[] { numberStr }) as ContentResult;
 
-            dynamic jsonObj = result.Data;
+            var decomposition = JsonConvert.DeserializeObject<PrimeFactorsError>(result.Content);
 
             StringAssert.AreEqualIgnoringCase("application/json", result.ContentType);
-            Assert.AreEqual(JsonRequestBehavior.AllowGet, result.JsonRequestBehavior);
-            Assert.AreEqual(jsonObj.number, numberStr);
-            Assert.AreEqual(jsonObj.error, "too big number (>1e6)");
+            Assert.AreEqual(decomposition.Number, numberStr);
+            Assert.AreEqual(decomposition.Error, "too big number (>1e6)");
         }
 
         [Test]
@@ -64,6 +63,16 @@ namespace Tests
             CollectionAssert.AreEquivalent(new List<int> { 2, 2, 2, 3 }, decomposition24);
         }
 
+        [Test]
+        public void CheckSeveralNumbers()
+        {
+            var controller = new PrimeFactorsController();
+            var result = controller.Index(new string[] { "300", "120", "hello" }) as ContentResult;
 
+            var decomposition = JsonConvert.DeserializeObject<IList<PrimeFactorsError>>(result.Content);
+
+            StringAssert.AreEqualIgnoringCase("application/json", result.ContentType);
+            Assert.AreEqual(3, decomposition.Count);
+        }
     }
 }

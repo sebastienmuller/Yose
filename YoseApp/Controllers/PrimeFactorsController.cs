@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -9,21 +11,16 @@ namespace YoseApp.Controllers
 {
     public class PrimeFactorsController : Controller
     {
-        public ActionResult Index(string number)
+        public ActionResult Index(string[] number)
         {
-            int multiple;
-            if (!int.TryParse(number, out multiple))
+            JsonSerializerSettings settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+
+            if (number.Length == 1)
             {
-                return Json(new { number = number, error = "not a number" }, "application/json", JsonRequestBehavior.AllowGet);
-            }
-            else if (multiple > 1000000)
-            {
-                return Json(new { number = number, error = "too big number (>1e6)" }, "application/json", JsonRequestBehavior.AllowGet);
+                return Content(JsonConvert.SerializeObject(new PrimeFactorsService().GetPrimeFactors(number[0]), settings), "application/json");
             }
 
-            var primeFactors = new PrimeFactorsService().GetPrimeFactors(multiple);
-
-            return Json(new { number = multiple, decomposition = primeFactors }, "application/json", JsonRequestBehavior.AllowGet);
+            return Content(JsonConvert.SerializeObject(new PrimeFactorsService().GetPrimeFactors(number), settings), "application/json");
         }
 	}
 }
